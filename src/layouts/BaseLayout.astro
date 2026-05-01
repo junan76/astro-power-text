@@ -1,0 +1,44 @@
+---
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import { siteConfig } from "../config/site";
+import "../styles/global.css";
+
+type Props = {
+	title?: string;
+	description?: string;
+	wide?: boolean;
+};
+
+const { title, description = siteConfig.description, wide = false } = Astro.props;
+const pageTitle = title ? `${title} | ${siteConfig.title}` : siteConfig.title;
+const base = siteConfig.basePath.replace(/\/$/, "");
+const canonical = new URL(`${base}${Astro.url.pathname}`, siteConfig.siteUrl).toString();
+---
+
+<!doctype html>
+<html lang={siteConfig.language}>
+	<head>
+		<meta charset="utf-8" />
+		<link rel="icon" type="image/svg+xml" href={`${base}/favicon.svg`} />
+		<link rel="icon" href={`${base}/favicon.ico`} />
+		<meta name="viewport" content="width=device-width" />
+		<meta name="generator" content={Astro.generator} />
+		<title>{pageTitle}</title>
+		<meta name="description" content={description} />
+		<link rel="canonical" href={canonical} />
+		<link rel="alternate" type="application/rss+xml" title={siteConfig.title} href={`${base}/rss.xml`} />
+		<meta property="og:title" content={pageTitle} />
+		<meta property="og:description" content={description} />
+		<meta property="og:type" content="website" />
+		<meta property="og:url" content={canonical} />
+		<meta name="twitter:card" content="summary" />
+	</head>
+	<body>
+		<Header />
+		<main class:list={["main-content", wide ? "site-shell-wide" : "site-shell"]}>
+			<slot />
+		</main>
+		<Footer />
+	</body>
+</html>

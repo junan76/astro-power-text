@@ -1,0 +1,31 @@
+---
+import { getCollection, render } from "astro:content";
+import PostLayout from "../../../layouts/PostLayout.astro";
+import { getProjectSlug, isProjectIndex, isPublishedPost } from "../../../lib/content";
+
+export async function getStaticPaths() {
+	const posts = (await getCollection("projects")).filter((post) => isPublishedPost(post) && !isProjectIndex(post));
+	return posts.map((post) => {
+		const [project, ...slugParts] = post.id.replace(/\.mdx?$/, "").split("/");
+		return {
+			params: { project, slug: slugParts.join("/") },
+			props: { post },
+		};
+	});
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+---
+
+<PostLayout
+	title={post.data.title}
+	description={post.data.description}
+	date={post.data.date}
+	updated={post.data.updated}
+	tags={post.data.tags}
+	command={`$ cat ./projects/${post.id}.md`}
+>
+	<p class="post-meta">Project: <a href={`/projects/${getProjectSlug(post)}/`}>{getProjectSlug(post)}</a></p>
+	<Content />
+</PostLayout>

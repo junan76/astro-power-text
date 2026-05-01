@@ -1,0 +1,56 @@
+---
+import { getCollection, render } from "astro:content";
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import PostList from "../../../components/PostList.astro";
+import {
+	getProjectArticlePath,
+	getProjectSlug,
+	isProjectIndex,
+	isPublishedPost,
+	sortByDateDesc,
+} from "../../../lib/content";
+
+export async function getStaticPaths() {
+	const projects = (await getCollection("projects")).filter(isProjectIndex);
+	return projects.map((project) => ({
+		params: { project: getProjectSlug(project) },
+		props: { project },
+	}));
+}
+
+const { project } = Astro.props;
+const { Content } = await render(project);
+const projectSlug = getProjectSlug(project);
+const articles = sortByDateDesc(
+	(await getCollection("projects"))
+		.filter((entry) => isPublishedPost(entry) && !isProjectIndex(entry) && getProjectSlug(entry) === projectSlug)
+		.map((entry) => ({
+			title: entry.data.title,
+			description: entry.data.description,
+			date: entry.data.date,
+			href: getProjectArticlePath(entry),
+			tags: entry.data.tags,
+		})),
+);
+---
+
+<BaseLayout title={project.data.title} description={project.data.description}>
+	<div class="terminal-page">
+		<article class="article">
+			<header class="article-header">
+				<p class="terminal-command">$ cat ./projects/{projectSlug}/index.md</p>
+				<h1>{project.data.title}</h1>
+				<p class="muted">{project.data.description}</p>
+				{project.data.status && <p class="post-meta">Status: {project.data.status}</p>}
+			</header>
+			<div class="prose">
+				<Content />
+			</div>
+		</article>
+
+		<section class="section terminal-scroll">
+			<h2 class="terminal-command">$ ls ./projects/{projectSlug} | grep -v index.md</h2>
+			<PostList posts={articles} empty="No project articles yet." variant="compact" />
+		</section>
+	</div>
+</BaseLayout>

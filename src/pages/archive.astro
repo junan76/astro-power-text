@@ -1,0 +1,57 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import {
+	formatCompactDate,
+	getPostPath,
+	getProjectArticlePath,
+	isProjectIndex,
+	isPublishedPost,
+	sortByDateDesc,
+} from "../lib/content";
+
+const regularPosts = (await getCollection("posts")).filter(isPublishedPost).map((post) => ({
+	title: post.data.title,
+	date: post.data.date,
+	href: getPostPath(post),
+}));
+
+const projectPosts = (await getCollection("projects"))
+	.filter((post) => isPublishedPost(post) && !isProjectIndex(post))
+	.map((post) => ({
+		title: post.data.title,
+		date: post.data.date,
+		href: getProjectArticlePath(post),
+	}));
+
+const posts = sortByDateDesc([...regularPosts, ...projectPosts]);
+const groups = posts.reduce<Record<string, typeof posts>>((acc, post) => {
+	const year = String(post.date.getFullYear());
+	acc[year] = acc[year] ?? [];
+	acc[year].push(post);
+	return acc;
+}, {});
+const years = Object.keys(groups).sort((a, b) => Number(b) - Number(a));
+---
+
+<BaseLayout title="Archive">
+	<div class="terminal-page">
+		<p class="terminal-command">$ find ./posts ./projects -type f | sort -r</p>
+
+		<div class="terminal-scroll">
+			{years.map((year) => (
+				<section class="archive-year">
+					<h2 class="terminal-command">./{year}</h2>
+					<ul class="list-plain terminal-list">
+						{groups[year].map((post) => (
+							<li class="terminal-row">
+								<time class="terminal-date" datetime={post.date.toISOString()}>{formatCompactDate(post.date)}</time>
+								<a class="terminal-link" href={post.href}>{post.title}</a>
+							</li>
+						))}
+					</ul>
+				</section>
+			))}
+		</div>
+	</div>
+</BaseLayout>

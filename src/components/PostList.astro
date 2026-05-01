@@ -1,0 +1,54 @@
+---
+import { formatCompactDate, formatDate } from "../lib/content";
+import { slugifyTag } from "../lib/content";
+
+type PostItem = {
+	title: string;
+	description: string;
+	date: Date;
+	href: string;
+	tags?: string[];
+};
+
+type Props = {
+	posts: PostItem[];
+	empty?: string;
+	variant?: "default" | "compact";
+};
+
+const { posts, empty = "No posts yet.", variant = "default" } = Astro.props;
+const truncate = (value: string, maxLength = 160) =>
+	value.length > maxLength ? `${value.slice(0, maxLength).trim()}...` : value;
+---
+
+{
+	posts.length > 0 && variant === "compact" ? (
+		<ul class="list-plain terminal-list">
+			{posts.map((post) => (
+				<li class="terminal-row">
+					<time class="terminal-date" datetime={post.date.toISOString()}>{formatCompactDate(post.date)}</time>
+					<a class="terminal-link" href={post.href} data-description={truncate(post.description)}>
+						{post.title}
+					</a>
+				</li>
+			))}
+		</ul>
+	) : posts.length > 0 ? (
+		<ul class="list-plain post-list">
+			{posts.map((post) => (
+				<li class="post-item">
+					<h3 class="post-title"><a href={post.href}>{post.title}</a></h3>
+					<div class="post-meta">{formatDate(post.date)}</div>
+					<p class="muted">{post.description}</p>
+					{post.tags && post.tags.length > 0 && (
+						<div class="tag-row">
+							{post.tags.map((tag) => <a class="tag" href={`/tags/${slugifyTag(tag)}/`}>{tag}</a>)}
+						</div>
+					)}
+				</li>
+			))}
+		</ul>
+	) : (
+		<p class="muted">{empty}</p>
+	)
+}

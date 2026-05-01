@@ -1,0 +1,17 @@
+---
+import { siteConfig } from "../config/site";
+
+const withBase = (href: string) => {
+	const base = siteConfig.basePath.replace(/\/$/, "");
+	return `${base}${href}`;
+};
+---
+
+<header class="site-header">
+	<div class="site-shell-wide site-header-inner">
+		<a class="site-title" href={withBase("/")}>{siteConfig.title}</a>
+		<nav class="site-nav" aria-label="Primary navigation">
+			{siteConfig.nav.map((item) => <a href={withBase(item.href)}>{item.label}</a>)}
+		</nav>
+	</div>
+</header>

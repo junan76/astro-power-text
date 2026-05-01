@@ -1,0 +1,35 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { isProjectIndex, isPublishedPost, slugifyTag } from "../../lib/content";
+
+const allPosts = [
+	...(await getCollection("posts")).filter(isPublishedPost),
+	...(await getCollection("projects")).filter((post) => isPublishedPost(post) && !isProjectIndex(post)),
+];
+
+const tagCounts = allPosts.reduce<Map<string, number>>((acc, post) => {
+	for (const tag of post.data.tags) acc.set(tag, (acc.get(tag) ?? 0) + 1);
+	return acc;
+}, new Map());
+
+const tags = [...tagCounts.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
+---
+
+<BaseLayout title="Tags">
+	<div class="terminal-page">
+		<p class="terminal-command">$ ls ./tags --sort=count</p>
+		<div class="terminal-scroll">
+			<ul class="list-plain terminal-count-list">
+				{tags.map(([tag, count]) => (
+					<li>
+						<a class="terminal-count-row" href={`/tags/${slugifyTag(tag)}/`}>
+							<span>{tag}</span>
+							<span class="terminal-count">{count}</span>
+						</a>
+					</li>
+				))}
+			</ul>
+		</div>
+	</div>
+</BaseLayout>

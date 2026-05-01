@@ -1,5 +1,7 @@
 # build output
 dist/
+.output/
+
 # generated types
 .astro/
 
@@ -11,14 +13,71 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
-
+*.log
 
 # environment variables
 .env
+.env.local
+.env.*.local
+.env.development
 .env.production
 
-# macOS-specific files
-.DS_Store
+# cache
+.cache/
+.eslintcache
+.stylelintcache
+.turbo/
 
-# jetbrains setting folder
+# test coverage
+coverage/
+.nyc_output/
+
+# deploy platforms
+.vercel/
+.netlify/
+.wrangler/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Linux
+*~
+.directory
+.Trash-*
+
+# JetBrains
 .idea/
+
+# VS Code
+.vscode/
+
+# Vim / Emacs / Sublime
+*.swp
+*.swo
+*.swn
+*~
+\#*\#
+.\#*
+*.sublime-workspace
+
+# temp files
+tmp/
+temp/
+*.tmp
+
+# local secrets / private notes
+*.local
+
+# AI tooling local state
+.codex
+.claude/
+.cursor/

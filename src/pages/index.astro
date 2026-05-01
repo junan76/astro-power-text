@@ -1,17 +1,41 @@
 ---
+import { getCollection } from "astro:content";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import PostList from "../components/PostList.astro";
+import { siteConfig } from "../config/site";
+import { getPostPath, isPublishedPost, sortByDateDesc } from "../lib/content";
 
+const posts = sortByDateDesc((await getCollection("posts")).filter(isPublishedPost));
+const featuredPosts = posts
+	.filter((post) => post.data.featured)
+	.slice(0, siteConfig.home.featuredPostCount);
+const recentPosts = posts.slice(0, siteConfig.home.recentPostCount);
+const toPostItem = (post) => ({
+	title: post.data.title,
+	description: post.data.description,
+	date: post.data.date,
+	href: getPostPath(post),
+	tags: post.data.tags,
+});
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<BaseLayout>
+	<div class="terminal-page">
+		<section class="home-intro">
+			<p class="terminal-command">$ whoami</p>
+			<p class="muted">{siteConfig.author.bio}</p>
+		</section>
+
+		<div class="terminal-scroll">
+			<section class="home-section">
+				<h2 class="terminal-command">$ ls ./featured | head -{siteConfig.home.featuredPostCount}</h2>
+				<PostList posts={featuredPosts.map(toPostItem)} empty="No featured posts yet." variant="compact" />
+			</section>
+
+			<section class="home-section">
+				<h2 class="terminal-command">$ ls ./posts | head -{siteConfig.home.recentPostCount}</h2>
+				<PostList posts={recentPosts.map(toPostItem)} empty="No recent posts yet." variant="compact" />
+			</section>
+		</div>
+	</div>
+</BaseLayout>

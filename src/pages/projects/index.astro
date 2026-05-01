@@ -1,0 +1,38 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getProjectPath, getProjectSlug, isProjectIndex, isPublishedPost, sortByDateDesc } from "../../lib/content";
+
+const projects = sortByDateDesc((await getCollection("projects")).filter(isProjectIndex));
+const projectEntries = await getCollection("projects");
+const articleCounts = projectEntries.reduce<Record<string, number>>((acc, entry) => {
+	if (isPublishedPost(entry) && !isProjectIndex(entry)) {
+		const slug = getProjectSlug(entry);
+		acc[slug] = (acc[slug] ?? 0) + 1;
+	}
+	return acc;
+}, {});
+---
+
+<BaseLayout title="Projects">
+	<div class="terminal-page">
+		<p class="terminal-command">$ ls ./projects</p>
+
+		<div class="terminal-scroll">
+			<section class="home-section">
+				<ul class="list-plain terminal-project-list">
+				{projects.map((project) => (
+					<li class="terminal-project-row">
+						<a class="terminal-link" href={getProjectPath(project)} data-description={project.data.description}>
+							{project.data.title}
+						</a>
+						<span class="terminal-meta">
+							{project.data.status ?? "unknown"} · {articleCounts[getProjectSlug(project)] ?? 0} posts
+						</span>
+					</li>
+				))}
+				</ul>
+			</section>
+		</div>
+	</div>
+</BaseLayout>

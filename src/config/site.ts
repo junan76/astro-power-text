@@ -7,9 +7,6 @@ export const siteConfig = {
 	author: {
 		name: "junan",
 		bio: "Software engineer writing about web development, tools, and systems.",
-		location: "Earth",
-		email: "you@example.com",
-		github: "https://github.com/yourname",
 	},
 	nav: [
 		{ label: "archive", href: "/archive/" },

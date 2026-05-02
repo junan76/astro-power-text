@@ -8,10 +8,12 @@ import {
 	isProjectIndex,
 	isPublishedPost,
 	sortByDateDesc,
+	truncate,
 } from "../lib/content";
 
 const regularPosts = (await getCollection("posts")).filter(isPublishedPost).map((post) => ({
 	title: post.data.title,
+	description: post.data.description,
 	date: post.data.date,
 	href: getPostPath(post),
 }));
@@ -20,6 +22,7 @@ const projectPosts = (await getCollection("projects"))
 	.filter((post) => isPublishedPost(post) && !isProjectIndex(post))
 	.map((post) => ({
 		title: post.data.title,
+		description: post.data.description,
 		date: post.data.date,
 		href: getProjectArticlePath(post),
 	}));
@@ -46,7 +49,7 @@ const years = Object.keys(groups).sort((a, b) => Number(b) - Number(a));
 						{groups[year].map((post) => (
 							<li class="terminal-row">
 								<time class="terminal-date" datetime={post.date.toISOString()}>{formatCompactDate(post.date)}</time>
-								<a class="terminal-link" href={post.href}>{post.title}</a>
+								<span><a class="terminal-link" href={post.href} data-description={truncate(post.description)}>{post.title}</a></span>
 							</li>
 						))}
 					</ul>

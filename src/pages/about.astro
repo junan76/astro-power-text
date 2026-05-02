@@ -1,14 +1,11 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import { siteConfig } from "../config/site";
+import { Content, frontmatter } from "../content/about.md";
 ---
 
-<BaseLayout title="About" description={siteConfig.author.bio}>
+<BaseLayout title={frontmatter.title} description={frontmatter.description}>
 	<p class="terminal-command">$ cat ./about</p>
-	<p>{siteConfig.author.bio}</p>
-	<ul class="list-plain terminal-kv-list">
-		<li><span>location</span><span>{siteConfig.author.location}</span></li>
-		<li><span>github</span><a href={siteConfig.author.github}>{siteConfig.author.github}</a></li>
-		{siteConfig.author.email && <li><span>email</span><a href={`mailto:${siteConfig.author.email}`}>{siteConfig.author.email}</a></li>}
-	</ul>
+	<div class="prose">
+		<Content />
+	</div>
 </BaseLayout>

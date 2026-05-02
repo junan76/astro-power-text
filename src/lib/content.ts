@@ -36,6 +36,9 @@ export const formatCompactDate = (date: Date) =>
 		day: "2-digit",
 	}).format(date);
 
+export const truncate = (value: string, maxLength = 160) =>
+	value.length > maxLength ? `${value.slice(0, maxLength).trim()}...` : value;
+
 export const slugifyTag = (tag: string) =>
 	tag
 		.toLowerCase()

@@ -21,8 +21,9 @@ export async function getStaticPaths() {
 const { project } = Astro.props;
 const { Content } = await render(project);
 const projectSlug = getProjectSlug(project);
+const projectEntries = await getCollection("projects");
 const articles = sortByDateDesc(
-	(await getCollection("projects"))
+	projectEntries
 		.filter((entry) => isPublishedPost(entry) && !isProjectIndex(entry) && getProjectSlug(entry) === projectSlug)
 		.map((entry) => ({
 			title: entry.data.title,

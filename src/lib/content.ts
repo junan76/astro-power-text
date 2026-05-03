@@ -53,3 +53,5 @@ export const getProjectPath = (entry: ProjectEntry) => `/projects/${getProjectSl
 
 export const getProjectArticlePath = (entry: ProjectEntry) =>
 	`/projects/${entry.id.replace(/\.mdx?$/, "")}/`;
+
+export const getTagPath = (tag: string) => `/tags/${slugifyTag(tag)}/`;

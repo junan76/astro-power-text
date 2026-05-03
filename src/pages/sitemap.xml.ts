@@ -3,6 +3,7 @@ import {
 	getPostPath,
 	getProjectArticlePath,
 	getProjectPath,
+	getTagPath,
 	isProjectIndex,
 	isPublishedPost,
 	slugifyTag,
@@ -14,10 +15,13 @@ export async function GET() {
 	const projectEntries = await getCollection("projects");
 	const projects = projectEntries.filter(isProjectIndex);
 	const projectPosts = projectEntries.filter((post) => isPublishedPost(post) && !isProjectIndex(post));
-	const tags = new Set([
-		...posts.flatMap((post) => post.data.tags),
-		...projectPosts.flatMap((post) => post.data.tags),
-	]);
+	const tagsBySlug = new Map<string, string>();
+	for (const post of [...posts, ...projectPosts]) {
+		for (const tag of post.data.tags) {
+			const slug = slugifyTag(tag);
+			if (!tagsBySlug.has(slug)) tagsBySlug.set(slug, tag);
+		}
+	}
 
 	const paths = [
 		"/",
@@ -28,7 +32,7 @@ export async function GET() {
 		...posts.map(getPostPath),
 		...projects.map(getProjectPath),
 		...projectPosts.map(getProjectArticlePath),
-		...[...tags].map((tag) => `/tags/${slugifyTag(tag)}/`),
+		...[...tagsBySlug.values()].map(getTagPath),
 	];
 
 	const urls = paths

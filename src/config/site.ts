@@ -2,8 +2,6 @@ export const siteConfig = {
 	title: "junan",
 	description: "Personal technical notes on software engineering.",
 	language: "en",
-	siteUrl: "https://yourname.github.io",
-	basePath: "",
 	author: {
 		name: "junan",
 		bio: "Software engineer writing about web development, tools, and systems.",
@@ -19,7 +17,7 @@ export const siteConfig = {
 		recentPostCount: 5,
 	},
 	socialLinks: [
-		{ label: "GitHub", href: "https://github.com/yourname" },
+		{ label: "GitHub", href: "https://github.com/junan76" },
 		{ label: "RSS", href: "/rss.xml" },
 	],
 };

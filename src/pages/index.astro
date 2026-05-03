@@ -3,14 +3,14 @@ import { getCollection } from "astro:content";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import PostList from "../components/PostList.astro";
 import { siteConfig } from "../config/site";
-import { getPostPath, isPublishedPost, sortByDateDesc } from "../lib/content";
+import { getPostPath, isPublishedPost, sortByDateDesc, type PostEntry } from "../lib/content";
 
 const posts = sortByDateDesc((await getCollection("posts")).filter(isPublishedPost));
 const featuredPosts = posts
 	.filter((post) => post.data.featured)
 	.slice(0, siteConfig.home.featuredPostCount);
 const recentPosts = posts.slice(0, siteConfig.home.recentPostCount);
-const toPostItem = (post) => ({
+const toPostItem = (post: PostEntry) => ({
 	title: post.data.title,
 	description: post.data.description,
 	date: post.data.date,

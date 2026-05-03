@@ -48,7 +48,7 @@ When adding a new listing, route, or feed, compose these helpers rather than re-
 
 ### Site configuration (`src/config/site.ts` + `src/lib/url.ts`)
 
-`siteConfig` is the single source of metadata: title, description, language, `siteUrl`, `basePath`, navigation, author, social links, and homepage counts (`featuredPostCount`, `recentPostCount`). `withBase()` and `absoluteUrl()` in `src/lib/url.ts` apply `basePath` consistently — use them for any internal href that needs to honour deployment under a sub-path. `astro.config.mjs` also carries `site` and `base`; keep these in sync with `siteConfig` when changing the deployment URL.
+`siteConfig` owns site-level metadata: title, description, language, navigation, author, social links, and homepage counts (`featuredPostCount`, `recentPostCount`). Deployment URL pieces live in `astro.config.mjs` only — `site` (origin) and `base` (sub-path). `src/lib/url.ts` reads them at build time via `import.meta.env.SITE` and `import.meta.env.BASE_URL`; `BaseLayout.astro` reads `Astro.site` for canonical. Do not reintroduce parallel `siteUrl` / `basePath` fields in `siteConfig` — the duplication-and-sync pattern is what these helpers replaced.
 
 ### Layouts and styling
 

@@ -1,12 +1,8 @@
 ---
 import { siteConfig } from "../config/site";
+import { withBase } from "../lib/url";
 
 const year = new Date().getFullYear();
-const withBase = (href: string) => {
-	if (href.startsWith("http")) return href;
-	const base = siteConfig.basePath.replace(/\/$/, "");
-	return `${base}${href}`;
-};
 ---
 
 <footer class="site-footer">

@@ -10,6 +10,7 @@ import {
 	sortByDateDesc,
 	truncate,
 } from "../lib/content";
+import { withBase } from "../lib/url";
 
 const regularPosts = (await getCollection("posts")).filter(isPublishedPost).map((post) => ({
 	title: post.data.title,
@@ -37,7 +38,7 @@ const groups = posts.reduce<Record<string, typeof posts>>((acc, post) => {
 const years = Object.keys(groups).sort((a, b) => Number(b) - Number(a));
 ---
 
-<BaseLayout title="Archive">
+<BaseLayout title="archive">
 	<div class="terminal-page">
 		<p class="terminal-command">$ find ./posts ./projects -type f | sort -r</p>
 
@@ -49,7 +50,7 @@ const years = Object.keys(groups).sort((a, b) => Number(b) - Number(a));
 						{groups[year].map((post) => (
 							<li class="terminal-row">
 								<time class="terminal-date" datetime={post.date.toISOString()}>{formatCompactDate(post.date)}</time>
-								<span><a class="terminal-link" href={post.href} data-description={truncate(post.description)}>{post.title}</a></span>
+								<span><a class="terminal-link" href={withBase(post.href)} data-description={truncate(post.description)}>{post.title}</a></span>
 							</li>
 						))}
 					</ul>

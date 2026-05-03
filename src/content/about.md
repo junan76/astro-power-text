@@ -1,5 +1,5 @@
 ---
-title: "About"
+title: "about"
 description: "About this site and its author."
 ---
 

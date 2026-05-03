@@ -1,6 +1,7 @@
 ---
 import BaseLayout from "./BaseLayout.astro";
-import { formatDate, slugifyTag } from "../lib/content";
+import { formatDate, getTagPath } from "../lib/content";
+import { withBase } from "../lib/url";
 
 type Props = {
 	title: string;
@@ -25,7 +26,7 @@ const { title, description, date, updated, tags = [], command = "$ cat ./post.md
 			</p>
 			{tags.length > 0 && (
 				<div class="tag-row">
-					{tags.map((tag) => <a class="tag" href={`/tags/${slugifyTag(tag)}/`}>{tag}</a>)}
+					{tags.map((tag) => <a class="tag" href={withBase(getTagPath(tag))}>{tag}</a>)}
 				</div>
 			)}
 		</header>

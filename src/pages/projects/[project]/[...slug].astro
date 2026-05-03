@@ -1,7 +1,8 @@
 ---
 import { getCollection, render } from "astro:content";
 import PostLayout from "../../../layouts/PostLayout.astro";
-import { getProjectSlug, isProjectIndex, isPublishedPost } from "../../../lib/content";
+import { getProjectPath, getProjectSlug, isProjectIndex, isPublishedPost } from "../../../lib/content";
+import { withBase } from "../../../lib/url";
 
 export async function getStaticPaths() {
 	const posts = (await getCollection("projects")).filter((post) => isPublishedPost(post) && !isProjectIndex(post));
@@ -26,6 +27,6 @@ const { Content } = await render(post);
 	tags={post.data.tags}
 	command={`$ cat ./projects/${post.id}.md`}
 >
-	<p class="post-meta">Project: <a href={`/projects/${getProjectSlug(post)}/`}>{getProjectSlug(post)}</a></p>
+	<p class="post-meta">Project: <a href={withBase(getProjectPath(post))}>{getProjectSlug(post)}</a></p>
 	<Content />
 </PostLayout>

@@ -2,6 +2,7 @@
 import { getCollection } from "astro:content";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { getProjectPath, getProjectSlug, isProjectIndex, isPublishedPost, sortByDateDesc, truncate } from "../../lib/content";
+import { withBase } from "../../lib/url";
 
 const projectEntries = await getCollection("projects");
 const projects = sortByDateDesc(projectEntries.filter(isProjectIndex));
@@ -14,7 +15,7 @@ const articleCounts = projectEntries.reduce<Record<string, number>>((acc, entry)
 }, {});
 ---
 
-<BaseLayout title="Projects">
+<BaseLayout title="projects">
 	<div class="terminal-page">
 		<p class="terminal-command">$ ls ./projects</p>
 
@@ -24,7 +25,7 @@ const articleCounts = projectEntries.reduce<Record<string, number>>((acc, entry)
 				{projects.map((project) => (
 					<li class="terminal-project-row">
 						<span>
-							<a class="terminal-link" href={getProjectPath(project)} data-description={truncate(project.data.description)}>
+							<a class="terminal-link" href={withBase(getProjectPath(project))} data-description={truncate(project.data.description)}>
 								{project.data.title}
 							</a>
 						</span>

@@ -1,10 +1,6 @@
 ---
 import { siteConfig } from "../config/site";
-
-const withBase = (href: string) => {
-	const base = siteConfig.basePath.replace(/\/$/, "");
-	return `${base}${href}`;
-};
+import { withBase } from "../lib/url";
 ---
 
 <header class="site-header">

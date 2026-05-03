@@ -1,5 +1,6 @@
 ---
-import { formatCompactDate, formatDate, slugifyTag, truncate } from "../lib/content";
+import { formatCompactDate, formatDate, getTagPath, truncate } from "../lib/content";
+import { withBase } from "../lib/url";
 
 type PostItem = {
 	title: string;
@@ -27,7 +28,7 @@ const { posts, empty = "No posts yet.", variant = "default" } = Astro.props;
 				<li class="terminal-row">
 					<time class="terminal-date" datetime={post.date.toISOString()}>{formatCompactDate(post.date)}</time>
 					<span>
-						<a class="terminal-link" href={post.href} data-description={truncate(post.description)}>
+						<a class="terminal-link" href={withBase(post.href)} data-description={truncate(post.description)}>
 							{post.title}
 						</a>
 					</span>
@@ -38,12 +39,12 @@ const { posts, empty = "No posts yet.", variant = "default" } = Astro.props;
 		<ul class="list-plain post-list">
 			{posts.map((post) => (
 				<li class="post-item">
-					<h3 class="post-title"><a href={post.href}>{post.title}</a></h3>
+					<h3 class="post-title"><a href={withBase(post.href)}>{post.title}</a></h3>
 					<div class="post-meta">{formatDate(post.date)}</div>
 					<p class="muted">{post.description}</p>
 					{post.tags && post.tags.length > 0 && (
 						<div class="tag-row">
-							{post.tags.map((tag) => <a class="tag" href={`/tags/${slugifyTag(tag)}/`}>{tag}</a>)}
+							{post.tags.map((tag) => <a class="tag" href={withBase(getTagPath(tag))}>{tag}</a>)}
 						</div>
 					)}
 				</li>

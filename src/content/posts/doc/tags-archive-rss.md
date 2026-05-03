@@ -47,7 +47,7 @@ export const slugifyTag = (tag: string) =>
 - `/rss.xml` 由 `src/pages/rss.xml.ts` 生成。它合并普通文章和项目子文章（同样排除项目主页和草稿），按日期降序取前 20 条。
 - `/sitemap.xml` 由 `src/pages/sitemap.xml.ts` 生成。它的覆盖面更大，会包含所有静态页面、文章、项目主页与项目子文章。
 
-两个 feed 的 URL 都是绝对地址，由 `src/lib/url.ts` 的 `absoluteUrl` 拼接 `siteConfig.siteUrl + basePath + path`。如果你的部署 URL 变了，记得同步更新 `siteConfig` 和 `astro.config.mjs`，否则 feed 里的链接会指向错误的域名。
+两个 feed 的 URL 都是绝对地址，由 `src/lib/url.ts` 的 `absoluteUrl` 拼接 `astro.config.mjs:site + base + path`（代码里通过 `import.meta.env.SITE` 和 `import.meta.env.BASE_URL` 读取）。部署 URL 改了只需要在 `astro.config.mjs` 一处更新。
 
 ## 调整出现的位置
 

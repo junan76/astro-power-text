@@ -1,30 +1,39 @@
 ---
 import { getCollection } from "astro:content";
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import { isProjectIndex, isPublishedPost, slugifyTag } from "../../lib/content";
+import { getTagPath, isProjectIndex, isPublishedPost, slugifyTag } from "../../lib/content";
+import { withBase } from "../../lib/url";
 
 const allPosts = [
 	...(await getCollection("posts")).filter(isPublishedPost),
 	...(await getCollection("projects")).filter((post) => isPublishedPost(post) && !isProjectIndex(post)),
 ];
 
-const tagCounts = allPosts.reduce<Map<string, number>>((acc, post) => {
-	for (const tag of post.data.tags) acc.set(tag, (acc.get(tag) ?? 0) + 1);
-	return acc;
-}, new Map());
+type TagBucket = { display: string; count: number };
+const tagBuckets = new Map<string, TagBucket>();
+for (const post of allPosts) {
+	for (const tag of post.data.tags) {
+		const slug = slugifyTag(tag);
+		const bucket = tagBuckets.get(slug);
+		if (bucket) bucket.count += 1;
+		else tagBuckets.set(slug, { display: tag, count: 1 });
+	}
+}
 
-const tags = [...tagCounts.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
+const tags = [...tagBuckets.values()].sort(
+	(a, b) => b.count - a.count || a.display.localeCompare(b.display),
+);
 ---
 
-<BaseLayout title="Tags">
+<BaseLayout title="tags">
 	<div class="terminal-page">
 		<p class="terminal-command">$ ls ./tags --sort=count</p>
 		<div class="terminal-scroll">
 			<ul class="list-plain terminal-count-list">
-				{tags.map(([tag, count]) => (
+				{tags.map(({ display, count }) => (
 					<li>
-						<a class="terminal-count-row" href={`/tags/${slugifyTag(tag)}/`}>
-							<span>{tag}</span>
+						<a class="terminal-count-row" href={withBase(getTagPath(display))}>
+							<span>{display}</span>
 							<span class="terminal-count">{count}</span>
 						</a>
 					</li>
